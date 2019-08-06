@@ -1,9 +1,10 @@
 {
   "devToolsPort": 19002,
-  "expoServerPort": null,
-  "packagerPort": null,
-  "packagerPid": null,
-  "expoServerNgrokUrl": null,
-  "packagerNgrokUrl": null,
-  "ngrokPid": null
+  "expoServerPort": 19000,
+  "packagerPort": 19001,
+  "packagerPid": 13516,
+  "expoServerNgrokUrl": "https://cb-r8g.anonymous.kantodex.exp.direct",
+  "packagerNgrokUrl": "https://packager.cb-r8g.anonymous.kantodex.exp.direct",
+  "ngrokPid": 17540,
+  "webpackServerPort": null
 }

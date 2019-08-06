@@ -24,7 +24,12 @@ import { ScrollView, FlatList } from "react-navigation";
 const numColumns = 3;
 
 export default class HomeScreen extends Component {
-  state = {};
+  constructor(props) {
+    super(props)
+    this.state = {};
+  };
+  
+
 
   getPokemonList = () => {
     axios
@@ -56,21 +61,21 @@ export default class HomeScreen extends Component {
   }
 
   //function to render state on <Text></Text> //
-
   renderPokemon = ({item,index}) => {
     return(
-      <View style = {styles.item}>
-      <Text>
+      //Click and Pass Props on this.navigate.navigation as Items to PokemonScreen
+      <TouchableOpacity onPress={() => this.props.navigation.navigate('PokeDex', {item})} style = {styles.item}>
+      <Text >
         {item.key}
       </Text>
         <Image 
-        style={{ width: 88, height: 77 }}
+        style={{ width: 85, height: 77 }}
         source = {{uri: item.sprites}}
         />
         <Text>
           {item.name}
         </Text>
-        </View>
+      </TouchableOpacity>
     )
   }
 
@@ -79,8 +84,6 @@ export default class HomeScreen extends Component {
   };
 
   render() {
-    console.log(this.state)
-    // const keyExtractor = this.state.pokeData.pokeIndex
     return (
       <SafeAreaView>
       <FlatList
@@ -88,7 +91,6 @@ export default class HomeScreen extends Component {
         renderItem = {this.renderPokemon}
         numColumns = {numColumns}
         style = {styles.container}
-      
         />
       </SafeAreaView>
     );
@@ -109,10 +111,10 @@ const styles = StyleSheet.create({
   },
 
   item: {
-    // backgroundColor: '#4D243D',
     padding: 1,
     borderWidth: 1,
     borderRadius: 10,
+    borderColor: '#424242',
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
