@@ -31,19 +31,22 @@ export default class PokeDexInfo extends Component {
     defence: "",
     specialDefence: "",
     specialAttack: "",
+    index: "",
+    sprites: "",
+    pokemonDescription: []
   };
 
 
   pokemonTypeArray = (array) => {
     let y = []
     let count = 0
-    for (slot of array){
+    for (slot of array) {
       y.push(array[count].type.name)
       count = count + 1
     }
-    this.setState({'type': y })
+    this.setState({ 'type': y })
   }
-  
+
   getPokemonStats = () => {
     //Props passed on to PokeMonScreen by renderPokemon()
     //get Pokemon URL and Render Pokemon Information
@@ -75,70 +78,88 @@ export default class PokeDexInfo extends Component {
   //helper function to get ENG text from PokeDex - Loop Tru Array and find if languages in ENG.
   getEngTEXT = (array) => {
     let textArr = []
-    let x = array.map((el)=> {
+    let x = array.map((el) => {
       // console.log(!textArr.includes(el.flavor_text))
-      el.language.name === "en" && !textArr.includes(el.flavor_text) ?  textArr.push(el.flavor_text) : null
+      el.language.name === "en" && !textArr.includes(el.flavor_text) ? textArr.push(el.flavor_text) : null
     })
-    this.setState({pokemonDescription: textArr})
+    this.setState({ pokemonDescription: textArr })
   }
 
   //use on GetPokemonStats HP/ ATK / SPEED / ETC BASE STATS.
   getPokemonSpecies = (index) => {
     axios.get(`https://pokeapi.co/api/v2/pokemon-species/${index}/`)
-    .then((result) => {
-      this.setState({evolutionTreeURL: result.data.evolution_chain.url})
-      this.getEngTEXT(result.data.flavor_text_entries)
-    }).then(() => {
-      this.getPokemonEvolutionTree(this.state.evolutionTreeURL)
-    }).catch((err) => {
-      
-    })
+      .then((result) => {
+        this.setState({ evolutionTreeURL: result.data.evolution_chain.url })
+        this.getEngTEXT(result.data.flavor_text_entries)
+      }).then(() => {
+        this.getPokemonEvolutionTree(this.state.evolutionTreeURL)
+      }).catch((err) => {
+
+      })
   }
 
+  getEvolutions = (data) => {
+    let list = []
+    list.push(data.chain.species.name)
 
-  getPokemonEvolutionTree = (url) => {
-  axios.get(url).then((result) => {
-    // console.log(result.data.chain.species.name)
-    // console.log(result.data.chain.evolves_to[0].species.name)
-    // console.log(result.data.chain.evolves_to[0].evolves_to[0].species.name)
-    }
-
-  )
-}
- 
-getEvolutions = (data) {
-  let list = []
-  list.push(data.chain.species.name)
-
-  let evolveTo = data.chain.evolves_to
-
-  while (evolveTo.length !== 0) {
-
-    for (let i = 0; i <= evolveTo.length; i++) {
-      if (evolveTo[i] !== undefined) {
-        list.push(evolveTo[i].species.name)
-        if (evolveTo.length - 1 === i) {
-          evolveTo = evolveTo[i].evolves_to
+    let evolveTo = data.chain.evolves_to
+    while (evolveTo.length !== 0) {
+      for (let i = 0; i <= evolveTo.length; i++) {
+        if (evolveTo[i] !== undefined) {
+          list.push(evolveTo[i].species.name)
+          if (evolveTo.length - 1 === i) {
+            evolveTo = evolveTo[i].evolves_to
+          }
         }
       }
     }
+    this.SetState({evolution: list })
   }
-  return list
 
-}
+  getPokemonEvolutionTree = (url) => {
+    axios.get(url).then((result) => {
+      getEvolutions(result)
+      // console.log(result.data.chain.species.name)
+      // console.log(result.data.chain.evolves_to[0].species.name)
+      // console.log(result.data.chain.evolves_to[0].evolves_to[0].species.name)
+    }
+    )
+  }
+
 
   componentDidMount = () => {
     this.getPokemonStats()
-   
 
   };
+
+
 
   render() {
     
     return (
       <SafeAreaView>
       <View>
-        <Text>Hello World!</Text>
+          <Image
+            style={{ width: 88, height: 88 }}
+            source={{uri: this.state.sprites}}
+          />
+          <Text>{this.state.name}</Text>
+          <View>
+            <Text>Type: {this.state.type} </Text>
+            <Text>Height: {(Math.trunc(Math.round(this.state.height * 3.93701) / 12))} ft </Text>
+            <Text>Weight: {(Math.round(this.state.height * .220462))} lbs </Text>
+
+          </View>
+          <View>
+            <Text> Base Stats </Text>
+            <Text>HP: {this.state.hp}</Text>
+            <Text>ATTACK: {this.state.attack}</Text>
+            <Text>SPEED: {this.state.speed}</Text>
+            <Text>DEFENCE: {this.state.defence}</Text>
+            <Text>sAttack: {this.state.specialAttack}</Text>
+            <Text>sDefence: {this.state.specialDefence}</Text>
+          </View>
+          <Text> {this.state.pokemonDescription[(Math.floor(Math.random()*this.state.pokemonDescription.length-1))]}</Text>
       </View>
       </SafeAreaView>
     );
